@@ -4,23 +4,21 @@ const {GraphQLObjectType,GraphQLSchema,GraphQLString, GraphQLID, GraphQLInt} = g
 
 
 const books = [
-  {name: 'Name of the wind', genre: 'Fantasy', id: '1'},
-  {name: 'Name of the wind', genre: 'Cokomo', id: '2'},
-  {name: 'Name of the wind', genre: 'Wi-Fi', id: '3'},
-  {name: 'The name of air', genre: 'eeeee', id: '4'}
+  {name: 'Name of the wind', genre: 'Fantasy', id: '1', authorId: '1'},
+  {name: 'Name of the wind', genre: 'Cokomo', id: '2', authorId: '2'},
+  {name: 'Name of the wind', genre: 'Wi-Fi', id: '3', authorId: '3'},
+  {name: 'The name of air', genre: 'eeeee', id: '4', authorId: '4'}
 ];
 
 
 const authors = [
-  {name: 'Sania', age: 22, id : '1'},
-  {name: 'Hafsa',age: 33, id:'2'},
-  {name: 'Tanbir', age: 55, id: '3'}
+  {name: 'Sania', age: 22, id : '1', bookId: '1'},
+  {name: 'Hafsa',age: 33, id:'2', bookId: '2'},
+  {name: 'Tanbir', age: 55, id: '3', bookId: '3'},
+  {name: 'Nazma', age:103, id: '4', bookId: '4'}
 ]
 
-const children =  [
-  {name: 'Maryeam', id: '1'},
-  {name: 'Inteha', id: '2'}
-]
+
 
 const BookType = new GraphQLObjectType({
   name: 'Book',
@@ -28,6 +26,12 @@ const BookType = new GraphQLObjectType({
     id: {type: GraphQLID},
     name: {type: GraphQLString},
     genre: {type: GraphQLString},
+    author: {
+      type: AuthorType,
+      resolve(parent, args){
+        return _.find(authors, {id: parent.authorId})
+      }
+    }
   })
 });
 
@@ -37,18 +41,18 @@ const AuthorType = new GraphQLObjectType({
   fields: ()=> ({
     id: {type: GraphQLID},
     name: {type: GraphQLString},
-    age: {type: GraphQLInt}
+    age: {type: GraphQLInt},
+    book: {
+      type: BookType,
+      resolve(parent, args){
+        return _.find(books, {id: parent. bookId})
+      }
+    }
   })
 });
 
 
-const ChildrenType = new GraphQLObjectType({
-  name: 'Children',
-  fields: () => ({
-    id: {type: GraphQLID},
-    name: {type: GraphQLString  }
-})
-})
+
 
 
 const RootQuery = new GraphQLObjectType({
@@ -60,7 +64,7 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent,args){
        // code to get data from db / other resources
 
-       console.log(typeof (args.id))
+      
        return _.find(books, {id: args.id})
       }
     },
@@ -72,13 +76,7 @@ const RootQuery = new GraphQLObjectType({
       }
     },
 
-    children: {
-      type: ChildrenType,
-      args: {id: {type: GraphQLID}},
-      resolve(parent, args){
-        return _.find(children,{id: args.id})
-      }
-    }
+   
 
 
 
