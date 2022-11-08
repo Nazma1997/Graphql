@@ -11,9 +11,6 @@ app.use('/graphql', graphqlHTTP({
 
 
 // Database Connection
-
-
-
 connectDB('mongodb://localhost:27017/graphQL')
 .then(() => {
   console.log('DataBase is Connected')
